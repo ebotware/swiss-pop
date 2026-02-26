@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>swiss-population</title>
+</head>
+
+<body class="h-full">
+
+  <div class="flex flex-col items-center h-full gap-2">
+    <div class="flex flex-row grow-1 w-full gap-2 relative">
+      <!-- BEGIN Sidebar-->
+      <div class="grow-0 absolute max-w-100 w-full bottom-6 right-0 z-1 p-2">
+
+        <div class="flex flex-col gap-1">
+          <div class="bg-white border-slate-500 border-1 w-full p-2 rounded-sm shadow-lg font-bold">
+            Popolazione Mendrisio 2024 per 10'000 m2
+          </div>
+          <div class="bg-white border-slate-500 border-1 w-full p-2 rounded-sm shadow-lg">
+            <div class="flex flex-col">
+              <div class="font-bold">
+                Genere:
+              </div>
+              <div class="flex gap-1 px-4">
+                <label for="gender-m">Maschile</label><input id="gender-m" type="checkbox" name="m" checked>
+                <label for="gender-f">Femminile</label><input id="gender-f" type="checkbox" name="f" checked>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <div class="font-bold">
+                Range età: <span id="range-from"></span> - <span id="range-to"></span>
+              </div>
+              <div class="flex gap-1">
+                <div class="pt-2 px-4 w-full relative">
+                  <div id="slider"></div>
+                </div>
+              </div>
+            </div>
+            <button id="btn-apply" class="border-1 border-slate-400 hover:bg-slate-200 cursor-pointer rounded px-2 mt-2">Applica</button>
+          </div>
+        </div>
+
+      </div>
+      <!-- ENDOF Sidebar-->
+      <div id="map" class="w-full grow-1 h-full z-0"></div>
+
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
