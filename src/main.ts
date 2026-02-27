@@ -33,6 +33,7 @@ class Main {
   ageGapMin: number = 0;
   ageGapMax: number = 0;
   transparance: number = 0
+  percentHtmlElement: NodeListOf<Element>;
   static async main() {
     Main.handleFiltersAspectTabs();
 
@@ -40,7 +41,7 @@ class Main {
     if (typeof htmlElements == "string") throw (htmlElements)
 
     new Main(htmlElements).init()
-    
+
   }
 
   constructor(htmlElements: HtmlElements) {
@@ -52,7 +53,12 @@ class Main {
     // =======================================================
 
     const openLayersMap = OpenLayersUtils.initAndRegisterMap("map", CENTER_X, CENTER_Y, lv95);
-    this.layerManager = new OpenLayersLayerManager(openLayersMap);
+
+    this.percentHtmlElement = document.querySelectorAll(`[data-attribute="loading-percentage"]`)
+
+    this.layerManager = new OpenLayersLayerManager(openLayersMap, (percent) => {
+      this.percentHtmlElement.forEach(e => e.innerHTML = Math.trunc(percent) + "%")
+    });
 
     // Init Sliders
     // =======================================================
@@ -138,6 +144,9 @@ class Main {
 
   onApplyBtnPressed() {
     async function apply(self: Main) {
+      for(const applyText of self.percentHtmlElement){
+        applyText.innerHTML = "Caricamento in corso"
+      }
       for (const applyBtn of self.htmlElements.applyButtons) {
         (applyBtn as HTMLButtonElement).disabled = true;
         applyBtn.querySelector('[data-action="apply"]')?.classList.add("hidden")

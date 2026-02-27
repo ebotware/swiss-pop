@@ -18,8 +18,11 @@ export class OpenLayersLayerManager {
   vectorLayer: VectorLayer | null = null;
   map: OLMap;
   worker;
-  constructor(map: OLMap) {
+  onPercentUpdate: (percent: number) => void
+
+  constructor(map: OLMap, onPercentUpdate: (percent: number) => void) {
     this.map = map;
+    this.onPercentUpdate = onPercentUpdate;
     this.worker = new Worker(
       new URL("./geodata.worker.ts", import.meta.url),
       { type: "module" }
@@ -40,6 +43,7 @@ export class OpenLayersLayerManager {
       this.worker.postMessage(message);
     })
   }
+
   buildFeaturesInChunks(
     data: PolygonData[],
     source: VectorSource,
@@ -51,6 +55,7 @@ export class OpenLayersLayerManager {
       let index = 0;
 
       const processChunk = () => {
+        this.onPercentUpdate(index/data.length*100)
         const end = Math.min(index + chunkSize, data.length);
         const chunkFeatures: Feature[] = [];
 
@@ -117,5 +122,7 @@ export class OpenLayersLayerManager {
 
 
     this.map.addLayer(this.vectorLayer)
+    
+    
   }
 }
