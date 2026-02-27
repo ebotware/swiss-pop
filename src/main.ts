@@ -9,7 +9,6 @@ import type { StatPopRowType } from './StatPopRowType';
 import { MapMamager } from './MapMamager';
 import OpenLayersUtils from './OpenLayersUtils'
 import { defineAndRegisterLv95 } from './utils';
-import type { Feature } from 'ol';
 import type { FeatureLike } from 'ol/Feature';
 
 
@@ -24,7 +23,7 @@ type HtmlElements = {
   fromElement: HTMLElement;
   transparenceSliderElement: HTMLElement;
   applyButtons: NodeListOf<Element>;
-  popDisplayDiv: HtmlElement;
+  popDisplayDiv: HTMLInputElement;
 }
 
 function initHtmlElements(): HtmlElements | string {
@@ -53,13 +52,15 @@ function initHtmlElements(): HtmlElements | string {
   if (!transparenceSliderElement) return "";
 
   const applyButtons = document.querySelectorAll("[data-target='apply']")
-  const tooltip = document.getElementById('tooltip') as HTMLElement;
+
+  const tooltip = document.querySelector<HTMLInputElement>('#tooltip');
+  if (!tooltip) return "tooltip not found";
 
   return { range, genderFHtmlE, genderMHtmlE, toElement, fromElement, transparenceSliderElement, applyButtons, popDisplayDiv: tooltip }
 }
 
 async function loadStatPopJSONData(): Promise<StatPopRowType[]> {
-  const response = await fetch("/STATPOP2024.json");
+  const response = await fetch("/swiss-pop/STATPOP2024.json");
 
   if (!response.ok) {
     throw new Error("Failed to load JSON");
@@ -75,7 +76,6 @@ async function loadStatPopJSONData(): Promise<StatPopRowType[]> {
 async function main() {
   let ageGapMin = 0;
   let ageGapMax = 0;
-  let gender = "a"
 
   let htmlElements = initHtmlElements()
 
