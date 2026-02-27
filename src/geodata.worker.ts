@@ -54,7 +54,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
             red = pNum * 4
         }
         if (gender === "m") {
-            red = pNum * 4
+            blue = pNum * 4
         }
         const halfSize = 50; // 100m square
         let centerX = element[1].lat;

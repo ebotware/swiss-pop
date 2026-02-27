@@ -39,7 +39,8 @@ class Main {
     let htmlElements = Main.findHtmlElements();
     if (typeof htmlElements == "string") throw (htmlElements)
 
-    new Main(htmlElements)
+    new Main(htmlElements).init()
+    
   }
 
   constructor(htmlElements: HtmlElements) {
@@ -123,8 +124,16 @@ class Main {
 
     // Render map features on load
     // ======================================================
+  }
 
-    this.updateMap()
+  async init() {
+    await this.updateMap()
+    let courtainHtmlElement = document.getElementById("courtain")
+    courtainHtmlElement?.classList.add("transition-all", "transition-discrete", "duration-500")
+    courtainHtmlElement?.classList.replace("opacity-100", "opacity-0")
+    courtainHtmlElement?.addEventListener("transitionend", () => {
+      courtainHtmlElement.classList.add("hidden")
+    }, { once: true })
   }
 
   onApplyBtnPressed() {
