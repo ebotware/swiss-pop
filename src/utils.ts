@@ -1,31 +1,16 @@
-import * as L from "leaflet";
 
-const borderThickness      = 2; 
+import proj4 from 'proj4';
 
-function metersToDegreesAtLatitude(lat:number, meters:number) {
-  // 1 grado di latitudine sono ca. 111.320 metri
-  const metersPerDegreeLat = 111320;                    
-  const metersPerDegreeLon = 111320 * Math.cos(lat * Math.PI / 180); // calcolo longitudine in base alla latitudine
-  
-  const deltaLat = meters / metersPerDegreeLat;
-  const deltaLon = meters / metersPerDegreeLon;
-  
-  return { deltaLat, deltaLon };
-}
+import { register } from 'ol/proj/proj4';
+import { get as getProjection } from 'ol/proj';
 
-export function createSquare(latLgn:L.LatLng, sizeMeters:number, color:string) {
-  const { deltaLat, deltaLon } = metersToDegreesAtLatitude(latLgn.lat, sizeMeters / 2);
-  
-  const bounds:L.LatLngBoundsExpression = [
-    [latLgn.lat - deltaLat, latLgn.lng - deltaLon],   // southwest
-    [latLgn.lat + deltaLat, latLgn.lng + deltaLon]    // northeast
-  ];
-  
-  return L.rectangle(bounds, {
-    color:       color,
-    weight:      borderThickness,
-    opacity:     0,
-    fillColor:   color,
-    fillOpacity: 0.5,
-  });
+export function defineAndRegisterLv95() {
+  proj4.defs(
+    'EPSG:2056',
+    '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 ' +
+    '+k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel ' +
+    '+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs'
+  );
+  register(proj4);
+  return getProjection('EPSG:2056');
 }

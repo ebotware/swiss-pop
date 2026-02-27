@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+.slider.rounded {
+    height: 10px;
+}
+
+.slider.rounded .noUi-connect {
+    background: #1976D2;
+}
+
+.slider.rounded .noUi-handle {
+    height: 18px;
+    width: 18px;
+    top: -5px;
+    right: -9px; /* half the width */
+    border-radius: 9px;
+}
+.slider.rounded .noUi-handle:before, .slider.rounded .noUi-handle:after{
+    display: none;
+}

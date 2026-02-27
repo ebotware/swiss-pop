@@ -1,24 +1,14 @@
 import Papa from 'papaparse';
 import * as fs from 'fs';
-import proj4 from "proj4";
+
 const LV95 = "EPSG:2056";
 const WGS84 = "EPSG:4326";
 
-proj4.defs(LV95,
-    "+proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 " +
-    "+k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel " +
-    "+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs"
-);
 
-// Convert function
-function lv95ToLatLng(e: number, n: number) {
-    const [lng, lat] = proj4(LV95, WGS84, [e, n]);
-    return { lat: lat, lng: lng };   // Leaflet wants [lat, lng]
-}
 
 function main() {
     console.log("Convert")
-    const fileContent = fs.readFileSync('STATPOP2024MEN.csv', 'utf8');
+    const fileContent = fs.readFileSync('./data/STATPOP2024.csv', 'utf8');
 
     var parseResult = Papa.parse(fileContent, { delimiter: "," })
     console.log(parseResult.data.length)
@@ -74,44 +64,15 @@ function main() {
                 console.error("Nan: ", row[xCol], row[yCol])
                 continue;
             }
-            const coordinates = lv95ToLatLng(x, y)
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 0, max: 4, tot: row[bm01] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 5, max: 9, tot: row[bm02] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 10, max: 14, tot: row[bm03] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 15, max: 19, tot: row[bm04] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 20, max: 24, tot: row[bm05] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 25, max: 29, tot: row[bm06] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 30, max: 34, tot: row[bm07] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 35, max: 39, tot: row[bm08] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 40, max: 44, tot: row[bm09] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 45, max: 49, tot: row[bm10] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 50, max: 54, tot: row[bm11] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 55, max: 59, tot: row[bm12] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 60, max: 64, tot: row[bm13] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 65, max: 69, tot: row[bm14] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 70, max: 74, tot: row[bm15] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 75, max: 79, tot: row[bm16] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 80, max: 84, tot: row[bm17] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "m", min: 85, max: 89, tot: row[bm18] })
-
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 0, max: 4, tot: row[bw01] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 5, max: 9, tot: row[bw02] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 10, max: 14, tot: row[bw03] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 15, max: 19, tot: row[bw04] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 20, max: 24, tot: row[bw05] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 25, max: 29, tot: row[bw06] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 30, max: 34, tot: row[bw07] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 35, max: 39, tot: row[bw08] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 40, max: 44, tot: row[bw09] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 45, max: 49, tot: row[bw10] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 50, max: 54, tot: row[bw11] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 55, max: 59, tot: row[bw12] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 60, max: 64, tot: row[bw13] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 65, max: 69, tot: row[bw14] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 70, max: 74, tot: row[bw15] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 75, max: 79, tot: row[bw16] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 80, max: 84, tot: row[bw17] })
-            data.push({ lat: coordinates.lat, lng: coordinates.lng, gender: "f", min: 85, max: 89, tot: row[bw18] })
+            const coordinates = {lat:x, lng:y}
+            let mVals = []
+            let fVals = []
+            // Assumiamo che BBM01, BBM02, siano in fila nelle colonne
+            for(let i = 0;i<19;i++){
+                mVals.push(row[bm01+i])
+                fVals.push(row[bw01+i])
+            }
+            data.push({ lat: coordinates.lat, lng: coordinates.lng, m:mVals, f:fVals })
         }
     }
     fs.writeFileSync("./public/STATPOP2024.json", JSON.stringify(data))
