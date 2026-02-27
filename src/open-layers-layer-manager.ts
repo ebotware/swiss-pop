@@ -43,7 +43,7 @@ export class OpenLayersLayerManager {
   buildFeaturesInChunks(
     data: PolygonData[],
     source: VectorSource,
-    chunkSize = 10000
+    chunkSize = 5000
   ): Promise<void> {
 
     return new Promise((resolve) => {
