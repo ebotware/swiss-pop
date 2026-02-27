@@ -1,6 +1,4 @@
 
-import type { StatPopRowType } from "./StatPopRowType";
-
 export interface WorkerRequest {
   type: "get-features";
   payload: GetFeaturesParams;

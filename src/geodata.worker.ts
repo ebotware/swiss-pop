@@ -1,5 +1,4 @@
-import type { GetFeaturesParams, PolygonData, WorkerRequest, WorkerResponse } from "./geodata-worker.types";
-import Feature from 'ol/Feature';
+import type { PolygonData, WorkerRequest, WorkerResponse } from "./geodata-worker.types";
 import type { CRD } from "./open-layers-layer-manager";
 import type { StatPopRowType } from "./StatPopRowType";
 
@@ -39,7 +38,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         cumulativeValue.set(statPopRow.lat + "-" + statPopRow.lng, { lat: statPopRow.lat, lng: statPopRow.lng, tot: total })
     }
 
-    var features: Feature[] = []
     let poligonData: PolygonData[] = []
     for (const element of cumulativeValue) {
         var pNum = element[1].tot

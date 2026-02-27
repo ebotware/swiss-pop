@@ -43,7 +43,7 @@ export class OpenLayersLayerManager {
   buildFeaturesInChunks(
     data: PolygonData[],
     source: VectorSource,
-    chunkSize = 15000
+    chunkSize = 2000
   ): Promise<void> {
 
     return new Promise((resolve) => {
@@ -90,8 +90,6 @@ export class OpenLayersLayerManager {
 
     let polygonData = await this.getFeatures({ lowerColLimit, upperColLimit, gender, transparence })
 
-
-    let i = 0;
 
     const startTime = performance.now()
     let vectorSource: VectorSource = new VectorSource()

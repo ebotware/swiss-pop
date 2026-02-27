@@ -2,7 +2,7 @@ import './style.css'
 import "nouislider/dist/nouislider.css";
 
 import 'ol/ol.css';
-import noUiSlider, { type API } from "nouislider";
+import noUiSlider from "nouislider";
 
 import { OpenLayersLayerManager } from './open-layers-layer-manager';
 import OpenLayersUtils from './OpenLayersUtils'
