@@ -1,3 +1,4 @@
+import Polygon from "ol/geom/Polygon";
 import type { PolygonData, WorkerRequest, WorkerResponse } from "./geodata-worker.types";
 import type { CRD } from "./open-layers-layer-manager";
 import type { StatPopRowType } from "./StatPopRowType";
@@ -19,10 +20,10 @@ async function loadStatPopJSONData(): Promise<StatPopRowType[]> {
     return sanitizedData;
 }
 
-let statPopData:StatPopRowType[] = [];
+let statPopData: StatPopRowType[] = [];
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     const { gender, lowerColLimit, upperColLimit, transparence } = event.data.payload;
-    if (statPopData.length==0) {
+    if (statPopData.length == 0) {
         console.log("Loading statpop data for the first time")
         statPopData = await loadStatPopJSONData()
     }
@@ -66,7 +67,10 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
             [centerX - halfSize, centerY + halfSize],
             [centerX - halfSize, centerY - halfSize],
         ]
-        let data: PolygonData = { poligonCoordinate, pNum, color: `rgba(${red},10,${blue},${transparence})` }
+
+        const polygon = new Polygon([poligonCoordinate]);
+        let extent = polygon.getExtent();
+        let data: PolygonData = { poligonCoordinate, pNum, color: `rgba(${red},10,${blue},${transparence})`, extent:extent }
         poligonData.push(data)
         //let feature = new Feature({ geometry: square, info: pNum });
         //feature.set("color", `rgba(${red},10,${blue},${transparence})`)

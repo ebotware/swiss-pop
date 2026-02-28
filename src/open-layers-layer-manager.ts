@@ -6,6 +6,8 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Fill, Style } from 'ol/style';
 import type { GetFeaturesParams, PolygonData, WorkerRequest, WorkerResponse } from './geodata-worker.types';
+import { bbox as bboxStrategy } from 'ol/loadingstrategy';
+import { intersects } from 'ol/extent';
 
 export type CRD = {
   lat: number,
@@ -49,13 +51,12 @@ export class OpenLayersLayerManager {
     source: VectorSource,
     chunkSize = 1000
   ): Promise<void> {
-
     return new Promise((resolve) => {
 
       let index = 0;
 
       const processChunk = () => {
-        this.onPercentUpdate(index/data.length*100)
+        this.onPercentUpdate(index / data.length * 100)
         const end = Math.min(index + chunkSize, data.length);
         const chunkFeatures: Feature[] = [];
 
@@ -97,8 +98,37 @@ export class OpenLayersLayerManager {
 
 
     const startTime = performance.now()
-    let vectorSource: VectorSource = new VectorSource()
-    await this.buildFeaturesInChunks(polygonData, vectorSource)
+    // let vectorSource: VectorSource = new VectorSource()
+    // await this.buildFeaturesInChunks(polygonData, vectorSource)
+    let vectorSource = new VectorSource({
+      strategy: bboxStrategy,
+      loader: async (extent) => {
+        // TODO:
+        const visiblePolygons = polygonData.filter(polygon => {
+          return intersects(extent, polygon.extent);
+        });
+        const remainingPoligon = polygonData.filter(polygon => {
+          return !intersects(extent, polygon.extent);
+        });
+        polygonData = remainingPoligon
+
+        const features = visiblePolygons.map(polygon => {
+          const square = new Polygon([polygon.poligonCoordinate]);
+
+          const feature = new Feature({
+            geometry: square,
+            info: polygon.pNum
+          });
+
+          feature.set("color", polygon.color);
+
+          return feature;
+        });
+
+        vectorSource.addFeatures(features);
+      }
+    })
+
     const endTime = performance.now()
     console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
 
@@ -122,7 +152,7 @@ export class OpenLayersLayerManager {
 
 
     this.map.addLayer(this.vectorLayer)
-    
-    
+
+
   }
 }

@@ -12,6 +12,7 @@ export type PolygonData = {
   poligonCoordinate:number[][],
   pNum:number,
   color:string
+  extent: number[];
 }
 
 export type GetFeaturesParams = {
