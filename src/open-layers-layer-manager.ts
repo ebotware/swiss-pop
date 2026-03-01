@@ -4,10 +4,12 @@ import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Fill, Style } from 'ol/style';
+import { Fill, Stroke, Style } from 'ol/style';
 import type { GetFeaturesParams, PolygonData, WorkerRequest, WorkerResponse } from './geodata-worker.types';
 import { bbox as bboxStrategy } from 'ol/loadingstrategy';
 import { intersects } from 'ol/extent';
+import Select from 'ol/interaction/Select';
+import { click } from 'ol/events/condition';
 
 export type CRD = {
   lat: number,
@@ -29,7 +31,32 @@ export class OpenLayersLayerManager {
       new URL("./geodata.worker.ts", import.meta.url),
       { type: "module" }
     );
+    const selectClick = new Select({
+      condition: click,
+      style: (feature, resolution) => {
+        if (!this.vectorLayer) return;
+        const originalStyle = this.vectorLayer.getStyle();
 
+        const resolved =
+          typeof originalStyle === 'function'
+            ? originalStyle(feature, resolution)
+            : originalStyle;
+
+        const style = (Array.isArray(resolved)
+          ? resolved[0]
+          : resolved) as Style;
+
+        style?.setStroke(
+          new Stroke({
+            color: 'yellow',
+            width: 2,
+          })
+        );
+
+        return style ?? [];
+      }
+    });
+    map.addInteraction(selectClick);
   }
 
   async getFeatures(params: GetFeaturesParams): Promise<PolygonData[]> {
@@ -71,7 +98,6 @@ export class OpenLayersLayerManager {
           });
 
           feature.set("color", polygon.color);
-
           chunkFeatures.push(feature);
         }
 
@@ -140,11 +166,12 @@ export class OpenLayersLayerManager {
       source: vectorSource,
       style: (feature) => {
         let color = feature.get("color");
-
+        
         let s = new Style({
           fill: new Fill({
             color: color,
           }),
+          
         })
         return s;
       },
