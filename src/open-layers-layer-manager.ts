@@ -165,6 +165,7 @@ export class OpenLayersLayerManager {
     this.vectorLayer = new VectorLayer({
       source: vectorSource,
       style: (feature) => {
+        
         let color = feature.get("color");
         
         let s = new Style({

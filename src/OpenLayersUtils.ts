@@ -19,7 +19,8 @@ export default class OpenLayersUtils {
                 projection: projection!,
                 center: [centerX, centerY],
                 zoom: 13,
-                minZoom: 12
+                minZoom: 12,
+                enableRotation:false
             }),
 
         });
